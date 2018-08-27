@@ -7,20 +7,22 @@ import re, requests, random, sys, json
 
 # Globals
 MAX_IMAGES_CHECK_IN_WEBSITE = 5
-DATABASE_NAME               = "sinun_db"
+DATABASE_NAME               = ""
+BLACK_LIST_CONCEPTS = ["porn", "erotic", "sexolog"]
+BLACK_LIST_KEYWORDS = ["porn", "ebony", "milf", "tits", "xxx", "anal", "gay"]
 
 
 ################### CREDENTIALS ######################
-# Here is all the credentials that needed for working with all services.
-# Enter yours credentials
-# After you sign to services, you can get there credentials from here : "https://console.bluemix.net/dashboard/apps" 
+#
+# Enter all credentials for IBM services in use
+# After registering to the services, the credentials can be found at "https://console.bluemix.net/dashboard/apps" 
 
 # Cloudant credentials.
 USERNAME_CLOUDANT = ""
 PASSWORD_CLOUDANT = ""
 URL_CLOUDANT      = ""
 
-# NLU credentials.
+# Natural Language Understanding credentials.
 USERNAME_NLU = ''
 PASSWORD_NLU = ''
 VERSION_NLU  = ''
@@ -34,15 +36,15 @@ IAM_API_KEY_VISUAL_RECOGNITION =''
 
 #
 #
-# get_url_images_in_text()
+# extract_image_urls_from_html()
 #
-# @param html - the html to extract urls of images from him.
-# @param protocol - the protocol of the website, for append to urls that not start with protocol.
+# @param html - the html code we extract all image urls from.
+# @param protocol - website protocol, used in cases of protocol-agnostic URLs 
 #
-# @return list of imags url.
+# @return list of image urls.
 #
 #
-def get_url_images_in_text(html, protocol):
+def extract_image_urls_from_html(html, protocol):
     urls = []
     all_urls = re.findall(r'((http\:|https\:)?\/\/[^"\' ]*?\.(png|jpg))', html, flags=re.IGNORECASE | re.MULTILINE | re.UNICODE)
     for url in all_urls:
@@ -55,24 +57,31 @@ def get_url_images_in_text(html, protocol):
 
 #
 #
-# get_images_from_url()
+# extract_image_urls_from_url()
 #
-# @param url - the url for extract images url from him. 
+# @param url - url of webpage we extract all image urls from
 #
-# @return list of images url.
+# @return list of image urls.
 #
 #
-def get_images_from_url(url):
+def extract_image_urls_from_url(url):
     protocol = url.split('/')[0]
     resp = requests.get(url)
-    return get_url_images_in_text(resp.text, protocol)
+    return extract_image_urls_from_html(resp.text, protocol)
 
-# Filtering with NLU (Natural language understanding).
-# @return bool true if url was filtering, false  if not.
-def filter_using_nlu(url):
-    black_list_concepts = ["porn", "erotic", "sexolog"]
-    black_list_keywords = ["porn", "ebony", "milf", "tits", "xxx", "anal", "gay"]
-    
+#
+#
+#
+# filter_using_nlu()
+#
+# @param url - url of webpage we are filtering
+# @param black_list_concepts - concepts of unauthorized webpages
+# @param black_list_keywords - keywords of unauthorized webpages
+#
+# @return indication whether the webpage is authorized based on blacklist params
+#
+#
+def filter_using_nlu(url, black_list_concepts, black_list_keywords):    
     natural_language_understanding = NaturalLanguageUnderstandingV1(
         version  = VERSION_NLU,
         username = USERNAME_NLU,
@@ -107,7 +116,7 @@ def filtering_with_visual_recognition(url):
         url = URL_VISUAL_RECOGNITION,
         iam_api_key = IAM_API_KEY_VISUAL_RECOGNITION)
     
-    images_links = get_images_from_url(url)
+    images_links = extract_image_urls_from_url(url)
     
     # check random MAX_IMAGES_CHECK_IN_WEBSITE images in the url.
     for url in random.sample(images_links, k=min(MAX_IMAGES_CHECK_IN_WEBSITE, len(images_links))):
@@ -147,7 +156,7 @@ def main(url_to_check):
     except:
         pass
         
-    if filter_using_nlu(url_to_check["url"]) == False or filtering_with_visual_recognition == False:
+    if filter_using_nlu(url_to_check["url"], BLACK_LIST_CONCEPTS, BLACK_LIST_KEYWORDS) == False or filtering_with_visual_recognition(url_to_check["url"]) == False:
         myDatabase.create_document({"_id": url_to_check["url"],"website_is_ok":  False})
         
     myDatabase.create_document({"_id": url_to_check["url"],"website_is_ok":  True})

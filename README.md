@@ -31,8 +31,3 @@ Check Cloudant Database for the url, so we don’t analyze the same one twice.
 Extract webpage text concepts with the Natural  Language Understanding model and compare with existing list of restricted concepts. 
 Analyze a set number of images randomly for explicit mature content using the Visual Recognition model.
 Send response to user, webpage is classified as appropriate.
-
-INSTRUCTIONS
-
-Get detailed instructions in the readme file. 
-

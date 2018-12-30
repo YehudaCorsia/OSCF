@@ -1,5 +1,5 @@
 **Create a Web Page Content Filter API
-Use the Watson Natural Language Understanding (NLU) and Watson Visual Recognition technologies on IBM Cloud to create a web content filter.**
+Use the Watson Natural Language Understanding (NLU) and Watson Visual Recognition technologies And Watson Cloudant (DBAAS) on IBM Cloud to create a web content filter.**
 
 By Yehuda Corsia and Michael Rakhsha | August 15, 2018
 

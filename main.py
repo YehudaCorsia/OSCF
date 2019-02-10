@@ -8,8 +8,10 @@ import re, requests, random, sys, json
 # Globals
 MAX_IMAGES_CHECK_IN_WEBSITE = 5
 DATABASE_NAME               = ""
-BLACK_LIST_CONCEPTS = ["porn", "erotic", "sexolog"]
-BLACK_LIST_KEYWORDS = ["porn", "ebony", "milf", "tits", "xxx", "anal", "gay"]
+
+# Enter here strings of black list concepts and keywords. 
+BLACK_LIST_CONCEPTS = []
+BLACK_LIST_KEYWORDS = []
 
 
 ################### CREDENTIALS ######################

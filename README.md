@@ -9,6 +9,9 @@ tags: [Artificial Intelligence] [Cloud Functions] [Natural Language Understandin
 
 This code pattern will show you how to create your own content filtering API. This example focuses on explicit pornographic content embedded within webpages. The code can easily be altered to filter other mature-rated content such as: violence, drugs and more.
 
+You can see POC website that used this API here 
+Yehudacorsia.github.io
+
 **DESCRIPTION**
 
 It has been for years now that the internet is playing a main role in our day to day lives. Surfing the world wide web is more common than ever, with an ever-growing number of users. It is important for many of us to control the content of what we see on the web, as there are many things we may not want to expose to ourselves and the people surrounding us, for whatever reason may be.
